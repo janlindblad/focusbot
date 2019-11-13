@@ -1,0 +1,3 @@
+export REGISTRAR_USER=reporter
+export REGISTRAR_PASSWORD=8608088
+export SLACK_BOT_TOKEN=`cat BotUserAccessToken.txt`
