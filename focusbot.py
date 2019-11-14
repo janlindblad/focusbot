@@ -70,15 +70,15 @@ def update_emoji(**payload):
 
   data = payload["data"]
   web_client = payload["web_client"]
-  channel_id = data["item"]["channel"]
-  user_id = data["user"]
-  ts = data["item"]["ts"]
-  reaction = data["reaction"]
+  channel_id = focusbot.safe_str(data["item"]["channel"])
+  user_id = focusbot.safe_str(data["user"])
+  ts = focusbot.safe_str(data["item"]["ts"])
+  reaction = focusbot.safe_str(data["reaction"])
 
   if(reaction == "loudspeaker"):
     user_obj = web_client.users_info(user=user_id)
     #print(f"UserObj={user_obj}")
-    user_name = user_obj["user"]["name"]
+    user_name = focusbot.safe_str(user_obj["user"]["name"])
 
     #print(f"update_emoji info channel_id={channel_id}")
     chan_obj = web_client.channels_info(channel=channel_id)
@@ -90,13 +90,13 @@ def update_emoji(**payload):
     # 'ts': '1572944129.002500', 'team': 'TPDE5536J', 'reactions': [{'name': 'loudspeaker', 'users': ['UNYEJ90P4'], 'count': 1}]}, 
     # 'unread_count': 33, 'unread_count_display': 32, 'members': ['UNYEJ90P4', 'UQ5CN126A'], 'topic': {'value': '', 'creator': '', 'last_set': 0}, 
     # 'purpose': {'value': 'Stockholm', 'creator': 'UNYEJ90P4', 'last_set': 1572709189}, 'previous_names': []}}
-    channel_name = chan_obj["channel"]["name"]
+    channel_name = focusbot.safe_str(chan_obj["channel"]["name"])
     channel_name_short = channel_name.split('__')[-1]
-    message_time = chan_obj["channel"]["latest"]["ts"]
+    message_time = focusbot.safe_str(chan_obj["channel"]["latest"]["ts"])
     now = datetime.datetime.now()
     shout_time = now.strftime("%H:%M, %b %d")
-    message_text = chan_obj["channel"]["latest"]["text"]
-    if 'username' in chan_obj["channel"]["latest"] and chan_obj["channel"]["latest"]["username"] == 'focusbot':
+    message_text = focusbot.safe_str(chan_obj["channel"]["latest"]["text"])
+    if 'username' in focusbot.safe_str(chan_obj["channel"]["latest"]) and focusbot.safe_str(chan_obj["channel"]["latest"]["username"]) == 'focusbot':
       focusbot.log.warning(f"Focusbot: Refusing to shout out one of focusbot's own messages")
       return
     decorated_message_text = f"{user_name} to {channel_name_short}, {shout_time}\n{message_text}"
@@ -120,7 +120,7 @@ def update_emoji(**payload):
       #print(f"Notified, jsonreply={jsonreply}")
       if jsonreply["registrar:output"]["success"]:
         try:
-          notifications_count = jsonreply["registrar:output"]["count"]
+          notifications_count = focusbot.safe_str(jsonreply["registrar:output"]["count"])
         except:
           notifications_count = None
         
@@ -143,6 +143,9 @@ class focusbot:
   restconf_client = None
   shouts = {}
   log = None
+
+  def focusbot.safe_str(unsafe_str):
+    return unsafe_str.replace("'","")
 
   def run_server(self):
     focusbot.log = logging.getLogger()

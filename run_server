@@ -1,3 +1,6 @@
 export REGISTRAR_USER=reporter
 export REGISTRAR_PASSWORD=8608088
 export SLACK_BOT_TOKEN=`cat BotUserAccessToken.txt`
+echo "===== Focusbot starting =====" >> focusbot.log
+date >> focusbot.log
+nohup ./focusbot.py 2>&1 >> focusbot.log &
